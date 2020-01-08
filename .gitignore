@@ -6,7 +6,7 @@
 
 # Compiled class file
 *.class
-# target/*
+target/*
 # TODO include .war file
 
 
