@@ -43,8 +43,9 @@ public class ResourcesController {
 
     @RequestMapping(method = RequestMethod.POST, path = "/image-car", produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<Resource> clearLicensePlate(@RequestParam("image") MultipartFile image) throws IOException {
-        ByteArrayResource resource = new ByteArrayResource(image.getBytes());
-        //TODO black the faces and number license plate
+        byte[] bytes = image.getBytes();
+        byte[] returnBytes = personalDataService.clearLicensePlate(bytes);
+        ByteArrayResource resource = new ByteArrayResource(returnBytes);
         return ResponseEntity.ok()
                 .body(resource);
     }
