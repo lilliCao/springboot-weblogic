@@ -1,5 +1,6 @@
 package itzb.riko;
 
+import itzb.riko.services.PersonalDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 
 @RestController
@@ -26,8 +28,9 @@ public class ResourcesController {
 
     @RequestMapping(method = RequestMethod.POST, path = "/image", produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<Resource> clearPersonalData(@RequestParam("image") MultipartFile image) throws IOException {
-        ByteArrayResource resource = new ByteArrayResource(image.getBytes());
-        //TODO black the faces and number license plate
+        byte[] bytes = image.getBytes();
+        byte[] returnBytes = personalDataService.clearPersonalData(bytes);
+        ByteArrayResource resource = new ByteArrayResource(returnBytes);
         return ResponseEntity.ok()
                 .body(resource);
     }

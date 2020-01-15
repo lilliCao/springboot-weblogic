@@ -35,7 +35,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-tomcat</artifactId>
-            <scope>provided</scope>
+            <!--scope>provided</scope-->
         </dependency>
         <dependency>
             <groupId>org.openpnp</groupId>
@@ -56,6 +56,27 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version>1.4</version>
+                <configuration>
+                    <revisionOnScmFailure>no.scm.config.in.pom</revisionOnScmFailure>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>create-timestamp-id</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>create-timestamp</goal>
+                        </goals>
+                        <configuration>
+                            <timestampFormat>yyyy-MM-dd_HH-mm-ss-S</timestampFormat>
+                            <timestampPropertyName>buildNumber</timestampPropertyName>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
@@ -64,9 +85,13 @@
                         <manifest>
                             <addDefaultImplementationEntries>false</addDefaultImplementationEntries>
                         </manifest>
+                        <manifestEntries>
+                            <Implementation-Build>${buildNumber}</Implementation-Build>
+                        </manifestEntries>
                     </archive>
                 </configuration>
             </plugin>
         </plugins>
+        <finalName>${artifactId}-${version}-${buildNumber}</finalName>
     </build>
 </project>
