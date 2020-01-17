@@ -68,7 +68,7 @@ public class PersonalDataService {
     }
 
     private Mat byteToMat(byte[] bytes) {
-        return Imgcodecs.imdecode(new MatOfByte(bytes), Imgcodecs.CV_LOAD_IMAGE_UNCHANGED);
+        return Imgcodecs.imdecode(new MatOfByte(bytes), Imgcodecs.IMREAD_UNCHANGED);
     }
 
     private byte[] matToByte(Mat mat) {

@@ -1,16 +1,10 @@
 package itzb.riko;
 
-import org.apache.commons.io.IOUtils;
 import org.opencv.core.*;
-import org.opencv.dnn.Net;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -19,6 +13,15 @@ public class Test {
     public static void main(String[] args) {
         nu.pattern.OpenCV.loadShared();
         String path = "C:\\Users\\thicao\\Desktop\\l3i2\\idea_projects\\demo\\personaldata\\src\\main\\resources\\test\\";
+        String pathResource = "C:\\Users\\thicao\\Desktop\\l3i2\\idea_projects\\demo\\personaldata\\src\\main\\resources\\";
+        testCar(pathResource, "demo.jpg", "output.jpg");
+        testCar(pathResource, "demo1.jpg", "output1.jpg");
+        testCar(pathResource, "demo2.jpg", "output2.jpg");
+        testCar(pathResource, "test_007.jpg", "output_007.jpg");
+        testCar(pathResource, "test_013.jpg", "output_013.jpg");
+        testCar(pathResource, "test_020.jpg", "output_020.jpg");
+        testCar(pathResource, "test_021.jpg", "output_021.jpg");
+        /*
         testLicense(path, "demo.jpg", "output.jpg");
         testLicense(path, "demo1.jpg", "output1.jpg");
         testLicense(path, "demo2.jpg", "output2.jpg");
@@ -27,10 +30,40 @@ public class Test {
         testLicense(path, "test_020.jpg", "output_020.jpg");
         testLicense(path, "test_021.jpg", "output_021.jpg");
 
+         */
+
     }
 
     private static void testText(String path, String input, String output) {
         // TODO https://stackoverflow.com/questions/53402064/opencv-east-text-detector-implementation-in-java
+    }
+
+    private static void testCar(String pathResource, String input, String output) {
+
+        CascadeClassifier car_cascade = new CascadeClassifier();
+        boolean load = car_cascade.load(pathResource + "haarcascade_licence_plate_rus_16stages.xml");
+        if (!load) {
+            System.out.println("Error loading");
+            return;
+        }
+        String path = pathResource + "test\\";
+
+        Mat mat = Imgcodecs.imread(path + input);
+
+        MatOfRect faceDetections = new MatOfRect();
+        car_cascade.detectMultiScale(mat, faceDetections);
+        if (faceDetections.toArray().length < 1) {
+            System.out.println("Not found");
+            return;
+        }
+        for (Rect rect : faceDetections.toArray()) {
+            Imgproc.rectangle(mat, new Point(rect.x, rect.y),
+                    new Point(rect.x + rect.width, rect.y + rect.height),
+                    new Scalar(0, 0, 0),
+                    -1);
+        }
+        Imgcodecs.imwrite(path + output, mat);
+
     }
 
     private static void testLicense(String path, String input, String output) {
