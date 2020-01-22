@@ -5,7 +5,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Rect;
-import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.highgui.Highgui;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -68,12 +68,12 @@ public class PersonalDataService {
     }
 
     private Mat byteToMat(byte[] bytes) {
-        return Imgcodecs.imdecode(new MatOfByte(bytes), Imgcodecs.IMREAD_UNCHANGED);
+        return Highgui.imdecode(new MatOfByte(bytes), Highgui.IMREAD_UNCHANGED);
     }
 
     private byte[] matToByte(Mat mat) {
         MatOfByte matOfByte = new MatOfByte();
-        Imgcodecs.imencode(".png", mat, matOfByte);
+        Highgui.imencode(".png", mat, matOfByte);
         return matOfByte.toArray();
     }
 }

@@ -3,7 +3,6 @@ package itzb.riko.services;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.opencv.core.*;
-import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 
 import java.io.File;
@@ -48,7 +47,7 @@ public class HaarCascadeFaceDetector implements IFaceDetector {
     @Override
     public Mat blackFace(Mat mat, Rect[] faces) {
         for (Rect rect : faces) {
-            Imgproc.rectangle(mat, new Point(rect.x, rect.y),
+            Core.rectangle(mat, new Point(rect.x, rect.y),
                     new Point(rect.x + rect.width, rect.y + rect.height),
                     this.BLACK,
                     this.THICKNESS);
