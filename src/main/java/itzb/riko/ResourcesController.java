@@ -1,6 +1,8 @@
 package itzb.riko;
 
+import itzb.riko.services.OCRService;
 import itzb.riko.services.PersonalDataService;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -12,13 +14,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/")
 public class ResourcesController {
     @Autowired
     private PersonalDataService personalDataService;
+
+    @Autowired
+    private OCRService ocrService;
 
     @RequestMapping(method = RequestMethod.GET, path = "/health")
     public String health() {
@@ -50,5 +58,14 @@ public class ResourcesController {
         ByteArrayResource resource = new ByteArrayResource(returnBytes);
         return ResponseEntity.ok()
                 .body(resource);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, path = "/image-text", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Map<String, String>> findText(@RequestParam("image") MultipartFile image) throws IOException {
+        File file = new File(image.getOriginalFilename());
+        FileUtils.writeByteArrayToFile(file, image.getBytes());
+        String text = ocrService.findText(file);
+        return ResponseEntity.ok()
+                .body(Collections.singletonMap("text", text));
     }
 }
