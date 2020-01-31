@@ -19,14 +19,8 @@
 
     <properties>
         <java.version>1.8</java.version>
+        <local.libs>${project.basedir}/src/main/libs</local.libs>
     </properties>
-
-    <repositories>
-        <repository>
-            <id>jcenter</id>
-            <url>https://jcenter.bintray.com/</url>
-        </repository>
-    </repositories>
 
     <dependencies>
         <dependency>
@@ -54,6 +48,51 @@
             <artifactId>commons-io</artifactId>
             <version>2.5</version>
         </dependency>
+        <dependency>
+            <groupId>com.local.jar</groupId>
+            <artifactId>jai-imageio-core</artifactId>
+            <version>1.4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.local.jar</groupId>
+            <artifactId>jna</artifactId>
+            <version>4.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.local.jar</groupId>
+            <artifactId>lept4j</artifactId>
+            <version>1.6.4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.local.jar</groupId>
+            <artifactId>tess4j</artifactId>
+            <version>3.4.8</version>
+        </dependency>
+        <dependency>
+            <groupId>com.local.jar</groupId>
+            <artifactId>ghost4j</artifactId>
+            <version>1.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.local.jar</groupId>
+            <artifactId>fontbox</artifactId>
+            <version>2.0.9</version>
+        </dependency>
+        <dependency>
+            <groupId>com.local.jar</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>2.0.9</version>
+        </dependency>
+        <dependency>
+            <groupId>com.local.jar</groupId>
+            <artifactId>pdfbox-tools</artifactId>
+            <version>2.0.9</version>
+        </dependency>
+        <dependency>
+            <groupId>com.local.jar</groupId>
+            <artifactId>jbig2-imageio</artifactId>
+            <version>3.0.0</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -79,6 +118,139 @@
                         <configuration>
                             <timestampFormat>yyyy-MM-dd_HH-mm-ss-S</timestampFormat>
                             <timestampPropertyName>buildNumber</timestampPropertyName>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>2.5.2</version>
+                <executions>
+                    <execution>
+                        <id>jai-imageio-core</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <groupId>com.local.jar</groupId>
+                            <artifactId>jai-imageio-core</artifactId>
+                            <version>1.4.0</version>
+                            <packaging>jar</packaging>
+                            <file>${local.libs}/jai-imageio-core-1.4.0.jar</file>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>jna</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <groupId>com.local.jar</groupId>
+                            <artifactId>jna</artifactId>
+                            <version>4.1.0</version>
+                            <packaging>jar</packaging>
+                            <file>${local.libs}/jna-4.1.0.jar</file>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>lept4j</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <groupId>com.local.jar</groupId>
+                            <artifactId>lept4j</artifactId>
+                            <version>1.6.4</version>
+                            <packaging>jar</packaging>
+                            <file>${local.libs}/lept4j-1.6.4.jar</file>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>tess4j</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <groupId>com.local.jar</groupId>
+                            <artifactId>tess4j</artifactId>
+                            <version>3.4.8</version>
+                            <packaging>jar</packaging>
+                            <file>${local.libs}/tess4j-3.4.8.jar</file>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>ghost4j</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <groupId>com.local.jar</groupId>
+                            <artifactId>ghost4j</artifactId>
+                            <version>1.0.1</version>
+                            <packaging>jar</packaging>
+                            <file>${local.libs}/ghost4j-1.0.1.jar</file>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>fontbox</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <groupId>com.local.jar</groupId>
+                            <artifactId>fontbox</artifactId>
+                            <version>2.0.9</version>
+                            <packaging>jar</packaging>
+                            <file>${local.libs}/fontbox-2.0.9.jar</file>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>pdfbox</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <groupId>com.local.jar</groupId>
+                            <artifactId>pdfbox</artifactId>
+                            <version>2.0.9</version>
+                            <packaging>jar</packaging>
+                            <file>${local.libs}/pdfbox-2.0.9.jar</file>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>pdfbox-tools</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <groupId>com.local.jar</groupId>
+                            <artifactId>pdfbox-tools</artifactId>
+                            <version>2.0.9</version>
+                            <packaging>jar</packaging>
+                            <file>${local.libs}/pdfbox-tools-2.0.9.jar</file>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>jbig2-imageio</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <groupId>com.local.jar</groupId>
+                            <artifactId>jbig2-imageio</artifactId>
+                            <version>3.0.0</version>
+                            <packaging>jar</packaging>
+                            <file>${local.libs}/jbig2-imageio-3.0.0.jar</file>
                         </configuration>
                     </execution>
                 </executions>
