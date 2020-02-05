@@ -6,6 +6,7 @@ import org.opencv.core.MatOfByte;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Rect;
 import org.opencv.imgcodecs.Imgcodecs;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -18,11 +19,14 @@ public class PersonalDataService {
 
     private ILicensePlateDetector licensePlateDetector;
 
+    @Autowired
+    private OCRService ocrService;
+
     @PostConstruct
     private void init() {
         nu.pattern.OpenCV.loadShared();
         this.faceDetector = new HaarCascadeFaceDetector();
-        this.licensePlateDetector = new EdgeLicensePlateDetector();
+        this.licensePlateDetector = new EdgeLicensePlateDetector(ocrService);
     }
 
     public void setFaceDetector(IFaceDetector faceDetector) {

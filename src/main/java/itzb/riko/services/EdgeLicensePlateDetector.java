@@ -1,15 +1,33 @@
 package itzb.riko.services;
 
+import lombok.extern.slf4j.Slf4j;
+import org.opencv.core.Point;
 import org.opencv.core.*;
+import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
 public class EdgeLicensePlateDetector implements ILicensePlateDetector {
+
     private final Scalar BLACK = new Scalar(0, 0, 0);
     private final int THICKNESS = -1;
+    private OCRService ocrService;
+
+    @Autowired
+    public EdgeLicensePlateDetector(OCRService ocrService) {
+        this.ocrService = ocrService;
+    }
+
 
     @Override
     public MatOfPoint findLicensePlate(Mat mat) {
@@ -32,15 +50,25 @@ public class EdgeLicensePlateDetector implements ILicensePlateDetector {
         List<MatOfPoint> contours = new ArrayList<>();
         Imgproc.findContours(imgClose, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
         RotatedRect license = Imgproc.minAreaRect(new MatOfPoint2f(contours.get(0).toArray()));
+        BufferedImage bufferedImage = matToBufferedImage(mat);
+        String licenseText = findTextInRectangle(bufferedImage, license.boundingRect());
         for (int i = 1; i < contours.size(); i++) {
             MatOfPoint contour = contours.get(i);
             RotatedRect rotatedRect = Imgproc.minAreaRect(new MatOfPoint2f(contour.toArray()));
             Rect rect = rotatedRect.boundingRect();
-            boolean isNotTooBig = mat.size().area() / 7 > rect.size().area();
             if (isAcceptableRect(rect, mat)) {
-                if (rect.size().area() > license.boundingRect().size().area() && isNotTooBig) {
-                    license = rotatedRect;
+                String newText = findTextInRectangle(bufferedImage, rect);
+                if (newText == null) {
+                    if (rect.size().area() > license.boundingRect().size().area()) {
+                        license = rotatedRect;
+                    }
+                } else {
+                    if (newText.length() > licenseText.length()) {
+                        license = rotatedRect;
+                        licenseText = newText;
+                    }
                 }
+
             }
         }
         if (isAcceptableRect(license.boundingRect(), mat)) {
@@ -60,7 +88,34 @@ public class EdgeLicensePlateDetector implements ILicensePlateDetector {
     }
 
     private boolean isAcceptableRect(Rect rect, Mat mat) {
+        boolean isNotTooBig = mat.size().area() / 7 > rect.size().area();
+        boolean isNotTooSmall = rect.area() > mat.size().area() / 100;
         double ratio = rect.size().width / rect.size().height;
-        return ratio > 3 && ratio < 5 && rect.area() > mat.size().area() / 100;
+        return ratio > 3 && ratio < 5 && isNotTooBig && isNotTooSmall;
+    }
+
+    private BufferedImage matToBufferedImage(Mat mat) {
+        MatOfByte matOfByte = new MatOfByte();
+        Imgcodecs.imencode(".png", mat, matOfByte);
+        byte[] byteArray = matOfByte.toArray();
+        BufferedImage bufImage = null;
+        try {
+            InputStream in = new ByteArrayInputStream(byteArray);
+            bufImage = ImageIO.read(in);
+        } catch (Exception e) {
+            log.info("Failed to convert mat to buffered image for ocr task");
+        }
+        return bufImage;
+    }
+
+    private String findTextInRectangle(BufferedImage image, Rect rect) {
+        Rectangle rectangle = new Rectangle(rect.x, rect.y, rect.width, rect.height);
+        try {
+            String text = ocrService.findText(image, rectangle);
+            return text.length() < 5 ? null : text.replaceAll("[^0-9a-zA-Z]", "");
+        } catch (Exception e) {
+            log.info("Failed to detect text in given rectangle");
+            return null;
+        }
     }
 }
